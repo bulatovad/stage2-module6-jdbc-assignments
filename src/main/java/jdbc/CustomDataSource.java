@@ -94,7 +94,7 @@ public class CustomDataSource implements DataSource {
         File propFile = new File("../../../resources/app.properties");
         try(java.io.FileReader fr = new java.io.FileReader(propFile);
             BufferedReader br = new BufferedReader(fr)) {
-            
+
             String line;
             while ((line = br.readLine()) != null) {
                 String[] prop = line.split("=");
