@@ -1,5 +1,4 @@
 package jdbc;
-
 import javax.sql.DataSource;
 
 import lombok.Getter;
@@ -45,12 +44,12 @@ public class CustomDataSource implements DataSource {
 
     @Override
     public Connection getConnection() throws SQLException {
-        return new CustomConnector().getConnection(this.url);
+        return new CustomConnector().getConnection(this.url, this.name, this.password);
     }
 
     @Override
     public Connection getConnection(String username, String password) {
-        return new CustomConnector().getConnection(this.url, this.name, this.password);
+        return new CustomConnector().getConnection(this.url, username, password);
     }
 
     @Override
@@ -90,7 +89,7 @@ public class CustomDataSource implements DataSource {
 
     private static Properties readAppProperties() {
         Properties appProp = new Properties();
-        File propFile = new File("../../../resources/app.properties");
+        File propFile = new File("src/main/resources/app.properties");
         try(java.io.FileReader fr = new java.io.FileReader(propFile);
             BufferedReader br = new BufferedReader(fr)) {
 
