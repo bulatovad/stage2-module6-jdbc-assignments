@@ -28,16 +28,16 @@ public class SimpleJDBCRepository {
     private static final String findAllUserSQL = "SELECT * FROM myusers";
 
 
-    public Long createUser(String firstname, String lastname, int age) {
+    public Long createUser(User newUser) {
 
         initializeConnection();
         try {
             ps = connection.prepareStatement(createUserSQL);
-            ps.setString(1, firstname);
-            ps.setString(2, lastname);
-            ps.setInt(3, age);
+            ps.setString(1, newUser.getFirstName());
+            ps.setString(2, newUser.getLastName());
+            ps.setInt(3, newUser.getAge());
             if(ps.execute()){
-                User newUser = findUserByName("Firstname Lastname");
+                newUser = findUserByName(newUser.getFirstName()+" "+newUser.getLastName());
                 return newUser.getId();
             }
         } catch (SQLException e) {
@@ -110,13 +110,16 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public User updateUser(Long userId) {
+    public User updateUser(User newUser) {
         initializeConnection();
         try {
             ps = connection.prepareStatement(updateUserSQL);
-            ps.setLong(4, userId);
+            ps.setString(1, newUser.getFirstName());
+            ps.setString(2, newUser.getLastName());
+            ps.setInt(3, newUser.getAge());
+            ps.setLong(4, newUser.getId());
             if(ps.execute()){
-                return findUserById(userId);
+                return findUserById(newUser.getId());
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
