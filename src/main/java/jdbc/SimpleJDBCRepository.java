@@ -21,21 +21,21 @@ public class SimpleJDBCRepository {
     private Statement st = null;
 
     private static final String createUserSQL = "INSERT INTO myusers(firstname, lastname, age) VALUES (?,?,?)";
-    private static final String updateUserSQL = "";
+    private static final String updateUserSQL = "UPDATE users SET firstname=?, lastname=?, age=? WHERE id =?";
     private static final String deleteUser = "DELETE FROM myysers WHERE id = ?";
     private static final String findUserByIdSQL = "SELECT * FROM myusers WHERE id = ?";
     private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE (firstname||' '||lastname) like '%?%'";
     private static final String findAllUserSQL = "SELECT * FROM myusers";
 
 
-    public Long createUser() {
+    public Long createUser(String firstname, String lastname, int age) {
 
+        initializeConnection();
         try {
-            connection = CustomDataSource.getInstance().getConnection();
             ps = connection.prepareStatement(createUserSQL);
-            ps.setString(1, "Firstname");
-            ps.setString(2, "LastName");
-            ps.setInt(3, 1);
+            ps.setString(1, firstname);
+            ps.setString(2, lastname);
+            ps.setInt(3, age);
             if(ps.execute()){
                 User newUser = findUserByName("Firstname Lastname");
                 return newUser.getId();
@@ -49,7 +49,7 @@ public class SimpleJDBCRepository {
     }
 
     public User findUserById(Long userId) {
-        initializeConnection();
+
         try {
 
             ps = connection.prepareStatement(findUserByIdSQL);
@@ -110,12 +110,13 @@ public class SimpleJDBCRepository {
         }
     }
 
-    public User updateUser() {
+    public User updateUser(Long userId) {
         initializeConnection();
         try {
             ps = connection.prepareStatement(updateUserSQL);
+            ps.setLong(4, userId);
             if(ps.execute()){
-                return findUserById(123L);
+                return findUserById(userId);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
