@@ -21,8 +21,8 @@ public class SimpleJDBCRepository {
     private Statement st = null;
 
     private static final String createUserSQL = "INSERT INTO myusers(firstname, lastname, age) VALUES (?,?,?)";
-    private static final String updateUserSQL = "UPDATE users SET firstname=?, lastname=?, age=? WHERE id =?";
-    private static final String deleteUser = "DELETE FROM myysers WHERE id = ?";
+    private static final String updateUserSQL = "UPDATE myusers SET firstname=?, lastname=?, age=? WHERE id =?";
+    private static final String deleteUser = "DELETE FROM myusers WHERE id = ?";
     private static final String findUserByIdSQL = "SELECT * FROM myusers WHERE id = ?";
     private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE (firstname||' '||lastname) like ?";
     private static final String findAllUserSQL = "SELECT * FROM myusers";
@@ -51,7 +51,6 @@ public class SimpleJDBCRepository {
     public User findUserById(Long userId) {
 
         try {
-
             ps = connection.prepareStatement(findUserByIdSQL);
             ps.setLong(1, userId);
             ResultSet rs = ps.executeQuery();
@@ -95,7 +94,7 @@ public class SimpleJDBCRepository {
         try {
             st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(findUserByNameSQL);
+            ResultSet rs = st.executeQuery(findAllUserSQL);
             while(rs.next()) {
                 User user = new User();
                 user.setId(rs.getLong("id"));
@@ -118,7 +117,7 @@ public class SimpleJDBCRepository {
             ps.setString(2, newUser.getLastName());
             ps.setInt(3, newUser.getAge());
             ps.setLong(4, newUser.getId());
-            if(ps.execute()){
+            if(ps.executeUpdate()>1){
                 return findUserById(newUser.getId());
             }
         } catch (SQLException e) {
