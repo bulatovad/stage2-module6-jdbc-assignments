@@ -4,10 +4,7 @@ import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -88,6 +85,7 @@ public class CustomDataSource implements DataSource {
     }
 
     private static Properties readAppProperties() {
+        /*
         Properties appProp = new Properties();
         File propFile = new File("src/main/resources/app.properties");
         try(java.io.FileReader fr = new java.io.FileReader(propFile);
@@ -102,5 +100,17 @@ public class CustomDataSource implements DataSource {
             io.printStackTrace();
         }
         return appProp;
+        */
+        Properties props = new Properties();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+        InputStream stream = loader.getResourceAsStream("app.properties");
+        try {
+            props.load(stream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return props;
     }
 }
