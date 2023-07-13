@@ -24,7 +24,7 @@ public class SimpleJDBCRepository {
     private static final String updateUserSQL = "UPDATE users SET firstname=?, lastname=?, age=? WHERE id =?";
     private static final String deleteUser = "DELETE FROM myysers WHERE id = ?";
     private static final String findUserByIdSQL = "SELECT * FROM myusers WHERE id = ?";
-    private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE (firstname||' '||lastname) like '%?%'";
+    private static final String findUserByNameSQL = "SELECT * FROM myusers WHERE (firstname||' '||lastname) like ?";
     private static final String findAllUserSQL = "SELECT * FROM myusers";
 
 
@@ -36,7 +36,7 @@ public class SimpleJDBCRepository {
             ps.setString(1, newUser.getFirstName());
             ps.setString(2, newUser.getLastName());
             ps.setInt(3, newUser.getAge());
-            if(ps.execute()){
+            if(ps.executeUpdate()>0){
                 newUser = findUserByName(newUser.getFirstName()+" "+newUser.getLastName());
                 return newUser.getId();
             }
@@ -73,7 +73,7 @@ public class SimpleJDBCRepository {
         initializeConnection();
         try {
             ps = connection.prepareStatement(findUserByNameSQL);
-            ps.setString(1, userName);
+            ps.setString(1, "%"+userName+"%");
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
                 User user = new User();
